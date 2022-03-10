@@ -1,18 +1,18 @@
-import { Layout } from "../../components/layouts"
-import { NextPage } from "next"
-import { GetStaticProps } from 'next'
-import { GetStaticPaths } from 'next'
-import { Pokemon } from "../../interfaces"
-import { Button, Card, Container, Grid, Image, Text } from "@nextui-org/react"
-import { localFavorites } from "../../utils"
-import { useState } from "react"
-import confetti from 'canvas-confetti'
+import React, { FC, useState } from 'react'
+import { Pokemon, SmallPokemon } from '../../interfaces'
+import { GetStaticProps, GetStaticPaths } from 'next'
+import { pokeApi } from '../../api'
+import { Layout } from '../../components/layouts';
+import confetti from 'canvas-confetti';
+import { localFavorites } from '../../utils';
+import { Button, Card, Container, Grid, Image, Text } from '@nextui-org/react';
 import { getPokemonInfo } from '../../utils/getPokemonInfo';
+
 interface Props {
   pokemon: Pokemon
 }
 
-const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+const PokemonByNamePage: FC<Props> = ({pokemon}) => {
 
   const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorites(pokemon.id))
 
@@ -93,15 +93,17 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
 
 
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
+
+
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
-  // const { data } = await  // your fetch function here 
+  const { data } = await pokeApi.get(`/pokemon?limit=151`) // your fetch function here 
 
-  const pokemonLimit = [...Array(151)].map((_, index) => `${index + 1}`) // Must be a string
 
+  const pokemonNames = data.results.map((pokemon: SmallPokemon) => `${pokemon.name}`) // Must be a string
   return {
-    paths: pokemonLimit.map((id) => ({ 
-      params: { id } }
-    )),
+    paths: pokemonNames.map((name: string) =>({
+      params: { name }
+    })),
     fallback: false
   }
 }
@@ -112,14 +114,15 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 //- The data can be publicly cached (not user-specific).
 //- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
 
+
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { id } = params as { id: string }
+  const { name } = params as { name: string }
 
   return {
     props: {
-      pokemon: await getPokemonInfo(id)
+      pokemon: await getPokemonInfo(name)
     }
   }
 }
 
-export default PokemonPage
+export default PokemonByNamePage

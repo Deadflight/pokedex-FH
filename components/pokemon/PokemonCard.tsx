@@ -8,12 +8,12 @@ interface Props {
   pokemon:  SmallPokemon
 }
 
-export const PokemonCard: FC<Props> = ({ pokemon }) => {
+const PokemonCard: FC<Props> = ({ pokemon }) => {
   const { name, id, img } = pokemon
   const router = useRouter()
 
   const handleClick = () => {
-    router.push(`/pokemon/${id}`)
+    router.push(`/pokemon/${name}`)
   }
 
   return (
@@ -32,3 +32,5 @@ export const PokemonCard: FC<Props> = ({ pokemon }) => {
     </Grid>
   )
 }
+
+export default PokemonCard
