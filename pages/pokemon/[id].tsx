@@ -102,7 +102,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     paths: pokemonLimit.map((id) => ({ 
       params: { id } }
     )),
-    fallback: false
+    fallback: 'blocking'
   }
 }
 

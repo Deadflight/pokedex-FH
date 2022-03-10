@@ -104,7 +104,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     paths: pokemonNames.map((name: string) =>({
       params: { name }
     })),
-    fallback: false
+    fallback: 'blocking'
   }
 }
 
